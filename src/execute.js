@@ -1,6 +1,6 @@
 import * as DOMPurify from 'dompurify';
 import html2md from 'html-to-md'
-
+import { detectLanguage, translate } from './language';
 
 // Check given item against blacklist, return null if in blacklist
 const blacklist = ["comment"];
@@ -133,15 +133,9 @@ async function translateBiggerTexts(text, source, target) {
   return result.join(" ");
 }
 
-async function translate(text, source, target) {
-  text = text.replace(/%/g,'procent');
-  const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&hl=en-US&dt=qca&dt=t&dt=bd&dj=1&source=icon&sl=${source}&tl=${target}&q=${text}`);
-  const json = await response.json();
-  return json.sentences.map(x => x.trans).join(" ");
-}
 
+// synth is loaded in content-script to make it globally available in order to be able to cancel speech
 function speak(text, language) {
-  // synth is loaded in content-script to make it globally available in order to be able to cancel speech
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.voice = synth.getVoices().find(voice => voice.lang.split('-')[0].toLowerCase() === language.split('-')[0].toLowerCase());
   synth.speak(utterance);
@@ -150,17 +144,17 @@ function speak(text, language) {
 async function speakSelection() {
   if(synth?.speaking)
     synth.cancel();
-  const text = getSelectionText() || getContentOfArticle();
-  console.log(text);
+  let text = getSelectionText() || getContentOfArticle();
   if(!text) return window.alert('Please select some text first.');
 
-  const lang = window.prompt("Enter language code (e.g. nl = netherlands, en = english):", "nl");
+  const detectedLanguage = await detectLanguage(text);
+  const lang = window.prompt("Enter language code (e.g. nl = netherlands, en = english). It will be translated automatically. ", detectedLanguage);
   if(!lang) return console.log('No language code entered.');
 
-  const translatedText = await translateBiggerTexts(text, 'auto', lang);
-  console.log(translatedText);
-
-  speak(translatedText, lang);
+  if(lang !== detectedLanguage)
+    text = await translateBiggerTexts(text, 'auto', lang);
+  
+  await speak(text, lang);
 }
 
 speakSelection();
