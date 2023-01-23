@@ -1,0 +1,1 @@
+let synth = window.speechSynthesis;

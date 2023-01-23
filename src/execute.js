@@ -1,6 +1,35 @@
 import * as DOMPurify from 'dompurify';
 import html2md from 'html-to-md'
 
+
+// Check given item against blacklist, return null if in blacklist
+const blacklist = ["comment"];
+function checkAgainstBlacklist(elem, level) {
+  if (elem && elem != null) {
+    const className = elem.className,
+      id = elem.id;
+
+    const isBlackListed = blacklist.map(item => {
+      if ((typeof className === "string" && className.indexOf(item) >= 0)
+        || (typeof id === "string" && id.indexOf(item) >= 0)
+      ) {
+        return true;
+      }
+    }).filter(item => item)[0];
+
+    if (isBlackListed) {
+      return null;
+    }
+
+    const parent = elem.parentElement;
+    if (level > 0 && parent && !parent.isSameNode(document.body)) {
+      return checkAgainstBlacklist(parent, --level);
+    }
+  }
+
+  return elem;
+}
+
 let contentSelector;
 function getContainer() {
   let selectedContainer;
@@ -71,7 +100,10 @@ function getContentOfArticle() {
 
   let content = DOMPurify.sanitize(pageSelectedContainer.innerHTML);
   content = html2md(content);
-  return content;
+  return content
+    .replace(/\!\[.*?\n/g,'')
+    .replace(/\<.*?\>/g,'')
+    .replace(/\#+\s+/g,'')
 }
 
 function getSelectionText() {
@@ -90,20 +122,45 @@ function getSelectionText() {
   return text;
 }
 
+async function translateBiggerTexts(text, source, target) {
+  const maxSize = 2000;
+  const result = [];
+  for(let i=0;i<text.length;i+=maxSize) {
+    const translation = await translate(text.slice(i, i+maxSize), source, target);
+    console.log('index ' + i + ' translation: ' + translation);
+    result.push(translation);
+  }
+  return result.join(" ");
+}
+
+async function translate(text, source, target) {
+  text = text.replace(/%/g,'procent');
+  const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&hl=en-US&dt=qca&dt=t&dt=bd&dj=1&source=icon&sl=${source}&tl=${target}&q=${text}`);
+  const json = await response.json();
+  return json.sentences.map(x => x.trans).join(" ");
+}
+
 function speak(text, language) {
-  const synth = window.speechSynthesis;
+  // synth is loaded in content-script to make it globally available in order to be able to cancel speech
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.voice = synth.getVoices().find(voice => voice.lang.split('-')[0].toLowerCase() === language.split('-')[0].toLowerCase());
   synth.speak(utterance);
 }
 
-function speakSelection() {
+async function speakSelection() {
+  if(synth?.speaking)
+    synth.cancel();
   const text = getSelectionText() || getContentOfArticle();
+  console.log(text);
   if(!text) return window.alert('Please select some text first.');
 
-  const lang = window.prompt("Enter language code (e.g. en):", "en");
+  const lang = window.prompt("Enter language code (e.g. nl = netherlands, en = english):", "nl");
+  if(!lang) return console.log('No language code entered.');
 
-  speak(text, lang || 'en');
+  const translatedText = await translateBiggerTexts(text, 'auto', lang);
+  console.log(translatedText);
+
+  speak(translatedText, lang);
 }
 
 speakSelection();

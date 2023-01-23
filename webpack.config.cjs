@@ -14,6 +14,7 @@ module.exports = {
         patterns: [
             { from: 'src/manifest.json', to: 'manifest.json' },
             { from: 'src/background.js', to: 'background.js' },
+            { from: 'src/content-script.js', to: 'content-script.js' },
         ],
     })
   ],

@@ -10,6 +10,13 @@
   "background": {
     "service_worker": "background.js"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*","http://*/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_end"
+    }
+  ],
   "permissions": [
     "tabs",
     "scripting"
