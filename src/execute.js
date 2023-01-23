@@ -145,7 +145,6 @@ async function speakSelection() {
   if(synth?.speaking)
     synth.cancel();
   let text = getSelectionText() || getContentOfArticle();
-  if(!text) return window.alert('Please select some text first.');
 
   const detectedLanguage = await detectLanguage(text);
   const lang = window.prompt("Enter language code (e.g. nl = netherlands, en = english). It will be translated automatically. ", detectedLanguage);
