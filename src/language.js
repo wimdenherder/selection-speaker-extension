@@ -11,5 +11,17 @@ async function detectLanguage(text) {
   return response.ld_result?.srclangs?.[0];
 }
 
+async function translateBiggerTexts(text, source, target) {
+  const maxSize = 2000;
+  const result = [];
+  for(let i=0;i<text.length;i+=maxSize) {
+    const translation = await translate(text.slice(i, i+maxSize), source, target);
+    console.log('index ' + i + ' translation: ' + translation);
+    result.push(translation);
+  }
+  return result.join(" ");
+}
+
 exports.translate = translate;
 exports.detectLanguage = detectLanguage;
+exports.translateBiggerTexts = translateBiggerTexts;

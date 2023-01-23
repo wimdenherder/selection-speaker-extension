@@ -1731,101 +1731,41 @@ async function translate(text, source, target) {
   return json.sentences.map(x => x.trans).join(" ");
 }
 
-
 async function detectLanguage(text) {
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=nl&hl=nl&dt=t&dt=bd&dj=1&source=bubble&tk=200215.200215&q=${text}`;
   const response = await (await fetch(url)).json();
   return response.ld_result?.srclangs?.[0];
 }
 
+async function translateBiggerTexts(text, source, target) {
+  const maxSize = 2000;
+  const result = [];
+  for(let i=0;i<text.length;i+=maxSize) {
+    const translation = await translate(text.slice(i, i+maxSize), source, target);
+    console.log('index ' + i + ' translation: ' + translation);
+    result.push(translation);
+  }
+  return result.join(" ");
+}
+
 exports.translate = translate;
-// exports.speak = speak;
 exports.detectLanguage = detectLanguage;
+exports.translateBiggerTexts = translateBiggerTexts;
 
-/***/ })
+/***/ }),
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
+/***/ "./src/scraper.js":
 /*!************************!*\
-  !*** ./src/execute.js ***!
+  !*** ./src/scraper.js ***!
   \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dompurify */ "./node_modules/.pnpm/dompurify@2.4.3/node_modules/dompurify/dist/purify.js");
 /* harmony import */ var dompurify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dompurify__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var html_to_md__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! html-to-md */ "./node_modules/.pnpm/html-to-md@0.8.3/node_modules/html-to-md/dist/index.js");
 /* harmony import */ var html_to_md__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(html_to_md__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./language */ "./src/language.js");
-
 
 
 
@@ -1949,16 +1889,16 @@ function getSelectionText() {
   return text;
 }
 
-async function translateBiggerTexts(text, source, target) {
-  const maxSize = 2000;
-  const result = [];
-  for(let i=0;i<text.length;i+=maxSize) {
-    const translation = await (0,_language__WEBPACK_IMPORTED_MODULE_2__.translate)(text.slice(i, i+maxSize), source, target);
-    console.log('index ' + i + ' translation: ' + translation);
-    result.push(translation);
-  }
-  return result.join(" ");
-}
+exports.getContentOfArticle = getContentOfArticle;
+exports.getSelectionText = getSelectionText;
+
+/***/ }),
+
+/***/ "./src/speak.js":
+/*!**********************!*\
+  !*** ./src/speak.js ***!
+  \**********************/
+/***/ ((__unused_webpack_module, exports) => {
 
 
 // synth is loaded in content-script to make it globally available in order to be able to cancel speech
@@ -1968,23 +1908,109 @@ function speak(text, language) {
   synth.speak(utterance);
 }
 
-async function speakSelection() {
+exports.speak = speak;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+(() => {
+"use strict";
+/*!************************!*\
+  !*** ./src/execute.js ***!
+  \************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./language */ "./src/language.js");
+/* harmony import */ var _scraper_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./scraper.js */ "./src/scraper.js");
+/* harmony import */ var _speak__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./speak */ "./src/speak.js");
+
+
+
+
+async function main() {
   if(synth?.speaking)
     synth.cancel();
-  let text = getSelectionText() || getContentOfArticle();
-  if(!text) return window.alert('Please select some text first.');
+  let text = (0,_scraper_js__WEBPACK_IMPORTED_MODULE_1__.getSelectionText)() || (0,_scraper_js__WEBPACK_IMPORTED_MODULE_1__.getContentOfArticle)();
 
-  const detectedLanguage = await (0,_language__WEBPACK_IMPORTED_MODULE_2__.detectLanguage)(text);
+  const detectedLanguage = await (0,_language__WEBPACK_IMPORTED_MODULE_0__.detectLanguage)(text);
   const lang = window.prompt("Enter language code (e.g. nl = netherlands, en = english). It will be translated automatically. ", detectedLanguage);
   if(!lang) return console.log('No language code entered.');
 
   if(lang !== detectedLanguage)
-    text = await translateBiggerTexts(text, 'auto', lang);
+    text = await (0,_language__WEBPACK_IMPORTED_MODULE_0__.translateBiggerTexts)(text, 'auto', lang);
   
-  await speak(text, lang);
+  await (0,_speak__WEBPACK_IMPORTED_MODULE_2__.speak)(text, lang);
 }
 
-speakSelection();
+main();
 })();
 
 /******/ })()
