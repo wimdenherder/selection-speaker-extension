@@ -89,7 +89,7 @@ function getContainer() {
   return selectedContainer;
 }
 
-function getContentOfArticle() {
+export function getContentOfArticle() {
   let pageSelectedContainer = getContainer();
 
   const pattern1 = /<a\b[^>]*>(.*?)<\/a>/gi;
@@ -105,7 +105,7 @@ function getContentOfArticle() {
     .replace(/\#+\s+/g,'')
 }
 
-function getSelectionText() {
+export function getSelectionText() {
   var text = "";
   var activeEl = document.activeElement;
   var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
@@ -120,6 +120,3 @@ function getSelectionText() {
   }
   return text;
 }
-
-exports.getContentOfArticle = getContentOfArticle;
-exports.getSelectionText = getSelectionText;
