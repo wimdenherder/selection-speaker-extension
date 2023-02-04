@@ -4,8 +4,9 @@ import { speak } from './speak';
 import { langAlgo } from './langAlgo';
 
 async function main() {
-  if(synth?.speaking)
-    synth.cancel();
+  synth.cancel();
+  cfg.algoIsRunning = false;
+  
   let text = getSelectionText() || getContentOfArticle();
 
   const detectedLanguage = await detectLanguage(text);
