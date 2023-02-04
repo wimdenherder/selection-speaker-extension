@@ -21,7 +21,7 @@ Load extension folder build (top left)
 
 ## Usage
 
-The software is equipped with an automatic language detection feature. To translate the text, simply enter a different language code. To run the language learning algorithm, add an exclamation mark (e.g. `en!`) to translate to English. The algorithm will read each sentence in both the original and translated languages, with easier languages like English and Dutch only read once and other languages read twice per sentence. The frequency of reading can be adjusted in the "learn-lang-algo.js" file.
+The software is equipped with an automatic language detection feature. To translate the text, simply enter a different language code. To run the language learning algorithm, add an exclamation mark (e.g. `en!`) to translate to English. The algorithm will read each sentence in both the original and translated languages, with easier languages like English and Dutch only read once and other languages read twice per sentence. The frequency of reading can be adjusted in the "langAlgo.js" file.
 
 ### Very simple version without build
 
