@@ -10,19 +10,19 @@ export async function langAlgo(text, srclang, targetlang) {
       const sentence = sentences[i];
       const translation = await translate(sentence, srclang, targetlang);
       if(easyLanguages.includes(srclang)) {
-        if(!cfg.algoIsRunning) return;
-        speak(sentence, srclang);
-        if(!cfg.algoIsRunning) return;
-        speak(translation, targetlang);
-        if(!cfg.algoIsRunning) return;
-        speak(translation, targetlang);
+        if(cfg.algoIsRunning)
+          await speak(sentence, srclang);
+        if(cfg.algoIsRunning)
+          await speak(translation, targetlang);
+        if(cfg.algoIsRunning)
+          await speak(translation, targetlang);
       } else {
-        if(!cfg.algoIsRunning) return;
-        speak(translation, targetlang);
-        if(!cfg.algoIsRunning) return;
-        speak(sentence, srclang);
-        if(!cfg.algoIsRunning) return;
-        speak(sentence, srclang);
+        if(cfg.algoIsRunning)
+          await speak(translation, targetlang);
+        if(cfg.algoIsRunning)
+          await speak(sentence, srclang);
+        if(cfg.algoIsRunning)
+          await speak(sentence, srclang);
       }
     }
   }
