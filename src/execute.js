@@ -2,10 +2,12 @@ import { detectLanguage, translateBiggerTexts } from './language';
 import { getContentOfArticle, getSelectionText }  from './scraper';
 import { speak } from './speak';
 import { langAlgo } from './langAlgo';
+import { deleteBox } from './box';
 
 async function main() {
   synth.cancel();
   cfg.algoIsRunning = false;
+  deleteBox();
   
   let text = getSelectionText() || getContentOfArticle();
 
