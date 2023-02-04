@@ -4,7 +4,7 @@
 
 Reads a page content or the selection on the page. 
 
-## installation
+## Installation
 
 ```
 npm install
@@ -12,11 +12,18 @@ npm run build
 ```
 
 this creates a build folder with the extension.   
-the npm run build is necessary due to some packages that are being used to get the full article content of a page.   
-I you want to check out the simpler extension version with only selection being spoken, check out the branch: https://github.com/wimdenherder/selection-speaker-extension/tree/speak-only-selection-simple-version
 
-## load into chrome
+## Load into chrome
 
 Go to chrome://extensions/  
 Click developer modus on (top right)  
 Load extension folder build (top left)  
+
+## Usage
+
+The software is equipped with an automatic language detection feature. To translate the text, simply enter a different language code. To run the language learning algorithm, add an exclamation mark (e.g. `en!`) to translate to English. The algorithm will read each sentence in both the original and translated languages, with easier languages like English and Dutch only read once and other languages read twice per sentence. The frequency of reading can be adjusted in the "learn-lang-algo.js" file.
+
+### Very simple version without build
+
+Check out [this early version](https://github.com/wimdenherder/selection-speaker-extension/tree/speak-only-selection-simple-version) that has just a content-script and reads the page
+
